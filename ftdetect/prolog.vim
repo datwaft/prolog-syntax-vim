@@ -2,7 +2,4 @@
 " Language: prolog
 " Mantainer: datwaft <github.com/datwaft>
 
-augroup prolog_ftype
-  au!
-  au BufNewFile,BufRead *.pl set filetype=prolog
-augroup END
+autocmd BufNewFile,BufReadPost *.pl set filetype=prolog
