@@ -24,88 +24,189 @@
 " ╔══════════════════════════════════════════════════════════════════════════════════════════════╗ "
 " ║                                        Initialization                                        ║ "
 " ╚══════════════════════════════════════════════════════════════════════════════════════════════╝ "
-  if exists("b:current_syntax")
+  if version < 600
+    syn clear
+  elseif exists("b:current_syntax")
     finish
   endif
+
+  syntax case match
 " ╔══════════════════════════════════════════════════════════════════════════════════════════════╗ "
 " ║                                       General keywords                                       ║ "
 " ╚══════════════════════════════════════════════════════════════════════════════════════════════╝ "
   " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
   " │                                       True keywords                                        │ "
   " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
-    syntax keyword PLTrue true
+    syntax keyword prologTrue true
 
-    highlight PLTrue ctermfg=green cterm=italic
+    highlight prologTrue ctermfg=green cterm=italic guifg=#C3E88D gui=italic
   " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
   " │                                       False keywords                                       │ "
   " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
-    syntax keyword PLFalse false fail
+    syntax keyword prologFalse false fail
 
-    highlight PLFalse ctermfg=red cterm=italic
+    highlight prologFalse ctermfg=red cterm=italic guifg=#FF5370 gui=italic
 " ╔══════════════════════════════════════════════════════════════════════════════════════════════╗ "
 " ║                                       General matches                                        ║ "
 " ╚══════════════════════════════════════════════════════════════════════════════════════════════╝ "
   " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
   " │                                          Operator                                          │ "
   " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
-    syntax match PLOperator '[\x21-\x40]'
+    syntax match prologOperator '-->'
+    syntax match prologOperator ':-'
+    syntax match prologOperator '?-'
 
-    highlight link PLOperator Operator
+    syntax keyword prologOperator dynamic discontiguous initialization meta_predicate module_transparent multifile public thread_local thread_initialization volatile
+
+    syntax match prologOperator ';'
+    syntax match prologOperator '|'
+    syntax match prologOperator ','
+    
+    syntax match prologOperator '->'
+    syntax match prologOperator '*->'
+
+    syntax match prologOperator ':='
+    syntax match prologOperator '\\+'
+
+    syntax match prologOperator '<'
+    syntax match prologOperator '='
+    syntax match prologOperator '=\.\.'
+    syntax match prologOperator '=@='
+    syntax match prologOperator '\\=@='
+    syntax match prologOperator '=:='
+    syntax match prologOperator '=<'
+    syntax match prologOperator '=='
+    syntax match prologOperator '=\\='
+    syntax match prologOperator '>'
+    syntax match prologOperator '>='
+    syntax match prologOperator '@<'
+    syntax match prologOperator '@=<'
+    syntax match prologOperator '@>'
+    syntax match prologOperator '@>='
+    syntax match prologOperator '\\='
+    syntax match prologOperator '\\=='
+    syntax keyword prologOperator as is
+    syntax match prologOperator '>:<'
+    syntax match prologOperator ':<'
+
+    syntax match prologOperator '#='
+
+    syntax match prologOperator ':'
+
+    syntax match prologOperator '+'
+    syntax match prologOperator '-'
+    syntax match prologOperator '\/\\'
+    syntax match prologOperator '\\\/'
+    syntax keyword prologOperator xor
+
+    syntax match prologOperator '?'
+
+    syntax match prologOperator '\*'
+    syntax match prologOperator '\/'
+    syntax match prologOperator '\/\/'
+    syntax match prologOperator '<<'
+    syntax match prologOperator '>>'
+    syntax keyword prologOperator div rdiv mod rem
+
+    syntax match prologOperator '\*\*'
+
+    syntax match prologOperator '\^'
+
+    syntax match prologOperator '\\'
+
+    syntax match prologOperator '\.'
+    syntax match prologOperator '$'
+
+    syntax match prologSpecialOperator '!'
+
+    highlight prologOperator ctermfg=cyan cterm=bold guifg=#89DDFF gui=bold
+    highlight prologSpecialOperator ctermfg=red cterm=bold guifg=#FF5370 gui=bold
+  " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
+  " │                                           Lists                                            │ "
+  " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
+    syntax region prologList start=/\[/ end=/\]/ contains=prologListDelimiters,prologListRangeDelimiters,
+      \@prologAll
+    syntax match prologListDelimiters /[,|]/ contained
+    syntax match prologListRangeDelimiters /[\[\]]/ contained
+
+    highlight prologListDelimiters ctermfg=cyan cterm=bold guifg=#89DDFF gui=bold
+    highlight prologListRangeDelimiters ctermfg=cyan cterm=bold guifg=#89DDFF gui=bold
   " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
   " │                                            Atom                                            │ "
   " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
-    syntax match PLAtom '\[\]'
-    syntax match PLAtom '[a-z]\w*'
-    syntax match PLAtom "'.*'"
+    syntax match prologAtom '\[\]'
+    syntax match prologAtom '[a-z]\w*'
+    syntax match prologAtom "'.*'"
 
-    highlight link PLAtom Identifier
+    highlight link prologAtom Define
   " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
   " │                                          Variable                                          │ "
   " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
-    syntax match PLVariable '[A-Z][A-Za-z0-9_]*'
+    syntax match prologVariable '[A-Z][A-Za-z0-9_]*'
 
-    highlight link PLVariable Type
+    highlight prologVariable ctermfg=yellow cterm=bold guifg=#FFCB6B gui=bold
   " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
   " │                                     Anonymous Variable                                     │ "
   " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
-    syntax match PLAnonymousVariable '_[A-Za-z0-9_]*'
+    syntax match prologAnonymousVariable '_[A-Za-z0-9_]*'
 
-    highlight link PLAnonymousVariable Comment
+    highlight prologAnonymousVariable ctermfg=yellow cterm=italic guifg=#FFCB6B gui=italic
   " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
   " │                                          Functor                                           │ "
   " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
-    syntax match PLFunctor '[a-z]\w*\((\)\@='
-    syntax match PLFunctor "'.*'\((\)\@="
+    syntax match prologFunctor '[a-z]\w*\((\)\@='
+    syntax match prologFunctor "'.*'\((\)\@="
 
-    highlight link PLFunctor Function
+    highlight link prologFunctor Function
+  " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
+  " │                                         Arguments                                          │ "
+  " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
+    syntax region prologArguments start=/(/  end=/)/ contains=prologArgumentsDelimiters,
+      \prologArgumentsRangeDelimiters,@prologAll
+    syntax match prologArgumentsDelimiters /[,]/ contained
+    syntax match prologArgumentsRangeDelimiters /[()]/ contained
+
+    highlight prologArgumentsDelimiters ctermfg=red cterm=bold guifg=#FF5370 gui=bold
+    highlight prologArgumentsRangeDelimiters ctermfg=red cterm=bold guifg=#FF5370 gui=bold
   " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
   " │                                          Numbers                                           │ "
   " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
     " e.g. 1234
-    syntax match PLNumber '\d\+'
+    syntax match prologNumber '\d\+'
     " e.g. +1234 or -1234
-    syntax match PLNumber '[-+]\d\+'
+    syntax match prologNumber '[-+]\d\+'
     " e.g. 1234.1234
-    syntax match PLFloat '\d\+\.\d\+'
+    syntax match prologFloat '\d\+\.\d\+'
     " e.g. +1234.1234 or -1234.1234
-    syntax match PLFloat '[-+]\d\+\.\d\+'
+    syntax match prologFloat '[-+]\d\+\.\d\+'
     " e.g. .1234
-    syntax match PLFloat '\.\d\+'
+    syntax match prologFloat '\.\d\+'
 
-    highlight link PLNumber Number
-    highlight link PLFloat Float
+    highlight link prologNumber Number
+    highlight link prologFloat Float
   " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
   " │                                          Strings                                           │ "
   " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
-    syntax region PLString start='"' end='"'
+    syntax region prologString start='"' end='"'
 
-    highlight link PLString String
+    highlight link prologString String
   " ┌────────────────────────────────────────────────────────────────────────────────────────────┐ "
   " │                                          Comment                                           │ "
   " └────────────────────────────────────────────────────────────────────────────────────────────┘ "
-    syntax match PLComment "%.*$"
+    syntax match prologComment "%.*$"
+    syntax region prologCComment fold start=/\/\*/ end=/\*\//
 
-    highlight link PLComment Comment
+    highlight link prologComment Comment
+    highlight link prologCComment Comment
+" ╔══════════════════════════════════════════════════════════════════════════════════════════════╗ "
+" ║                                           Clusters                                           ║ "
+" ╚══════════════════════════════════════════════════════════════════════════════════════════════╝ "
+  syntax cluster prologOperators contains=prologOperator,prologSpecialOperator
+  syntax cluster prologKeywords contains=prologTrue,prologFalse
+  syntax cluster prologNumbers contains=prologNumber,prologFloat
+  syntax cluster prologVariables contains=prologVariable,prologAnonymousVariable
+  syntax cluster prologComments contains=prologComment,prologCComment
+  syntax cluster prologAll contains=@prologKeywords,@prologOperators,prologAtom,@prologVariables,prologFunctor,@prologNumbers,prologString,prologList,@prologComments,prologArguments,prologListDelimiters,prologListRangeDelimiters,prologArgumentsDelimiters,prologArgumentsRangeDelimiters
 " ╔══════════════════════════════════════════════════════════════════════════════════════════════╗ "
 " ║                                         Finalization                                         ║ "
 " ╚══════════════════════════════════════════════════════════════════════════════════════════════╝ "
