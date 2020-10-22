@@ -86,8 +86,8 @@ syntax case match
     syntax match prologListDivisor '[,|]' contained
   " -> Fuctor
     " Functor Group
-      syntax match prologFunctorGroup '[a-z]\w*(.\{-})' contains=prologFunctor,prologParameters
-      syntax match prologFunctorGroup "'.\{-}'(.\{-})" contains=prologFunctor,prologParameters
+      syntax region prologFunctorGroup start='[a-z]\w*(' end=')' contains=prologFunctor,prologParameters keepend
+      syntax region prologFunctorGroup start="'.\{-}'(" end=")" contains=prologFunctor,prologParameters keepend
     " Functor
       syntax match prologFunctor '[a-z]\w*\((\)\@=' contained containedin=prologFunctorGroup nextgroup=prologParameters
       syntax match prologFunctor "'.*'\((\)\@=" contained containedin=prologFunctorGroup nextgroup=prologParameters
@@ -104,16 +104,11 @@ syntax case match
     syntax region prologString start='"' skip='\\"' end='"'
   " -> Body
     " Normal Body
-      syntax match prologBody ':-.\{-}\.' contains=@prologAll,prologBodyDelimiter
-      syntax match prologBody '?-.\{-}\.' contains=@prologAll,prologBodyDelimiter
-      syntax match prologBodyDelimiter ':-' contained containedin=prologBody
-      syntax match prologBodyDelimiter '?-' contained containedin=prologBody
-      syntax match prologBodyDelimiter '\.' contained containedin=prologBody
+      syntax region prologBody matchgroup=prologBodyDelimiter start=':-' end='\.' contains=@prologAll
+      syntax region prologBody matchgroup=prologBodyDelimiter start='?-' end='\.' contains=@prologAll
     " DCG Body
-      syntax match prologDCGBody '-->.\{-}\.' contains=@prologAll,prologDCGBodyDivisor,prologDCGBodyDelimiter
+      syntax region prologDCGBody matchgroup=prologDCGBodyDelimiter start='-->' end='\.' contains=@prologAll,prologDCGBodyDivisor
       syntax match prologDCGBodyDivisor '[{\}]' contained containedin=prologDCGBody
-      syntax match prologDCGBodyDelimiter '-->' contained containedin=prologDCGBody
-      syntax match prologDCGBodyDelimiter '\.' contained containedin=prologDCGBody
   " -> Comment
     syntax match prologComment "%.*$"
     syntax region prologCComment fold start=/\/\*/ end=/\*\//
