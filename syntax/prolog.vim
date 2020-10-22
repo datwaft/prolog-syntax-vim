@@ -82,9 +82,8 @@ syntax case match
     syntax match prologFloat '\.\d\+'
     syntax cluster prologNumbers contains=prologNumber,prologFloat
   " -> List
-    syntax match prologList '\[.\{-}\]' contains=prologListDivisor,prologListDelimiter,@prologAll
+    syntax region prologList matchgroup=prologListDelimiter start='\[' end='\]' contains=prologListDivisor,@prologAll
     syntax match prologListDivisor '[,|]' contained
-    syntax match prologListDelimiter '[\[\]]' contained
   " -> Fuctor
     " Functor Group
       syntax match prologFunctorGroup '[a-z]\w*(.\{-})' contains=prologFunctor,prologParameters
@@ -93,9 +92,8 @@ syntax case match
       syntax match prologFunctor '[a-z]\w*\((\)\@=' contained containedin=prologFunctorGroup nextgroup=prologParameters
       syntax match prologFunctor "'.*'\((\)\@=" contained containedin=prologFunctorGroup nextgroup=prologParameters
     " Parameters
-      syntax match prologParameters '(.\{-})' contained containedin=prologFunctorGroup contains=@prologAll,prologParameterDivisor,prologParameterDelimiter
+      syntax region prologParameters matchgroup=prologParameterDelimiter start='(' end=')' containedin=prologFunctorGroup contains=prologParameterDivisor,@prologAll
       syntax match prologParameterDivisor ',' contained containedin=prologParameters
-      syntax match prologParameterDelimiter '[()]' contained containedin=prologParameters
   " -> Variables
     " Varable
       syntax match prologVariable '[A-Z][A-Za-z0-9_]*'
@@ -103,7 +101,7 @@ syntax case match
       syntax match prologAnonymousVariable '_[A-Za-z0-9_]*'
     syntax cluster prologVariables contains=prologVariable,prologAnonymousVariable
   " -> String
-    syntax region prologString start='"' end='"'
+    syntax region prologString start='"' skip='\\"' end='"'
   " -> Body
     " Normal Body
       syntax match prologBody ':-.\{-}\.' contains=@prologAll,prologBodyDelimiter
@@ -157,4 +155,3 @@ syntax case match
     highlight link prologCComment Comment
 " => Finalization
 let b:current_syntax = "prolog"
-
