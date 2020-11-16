@@ -44,7 +44,7 @@ syntax case match
     syntax match prologOperator '@>='
     syntax match prologOperator '\\='
     syntax match prologOperator '\\=='
-    syntax keyword prologOperator as is
+    syntax keyword prologOperator is
     syntax match prologOperator '>:<'
     syntax match prologOperator ':<'
     syntax match prologOperator '#='
@@ -73,7 +73,7 @@ syntax case match
   " -> Atom
     syntax match prologAtom '\[\]'
     syntax match prologAtom '[a-z]\w*'
-    syntax match prologAtom "'.*'"
+    syntax region prologAtom start="'" end="'" oneline extend
   " -> Numbers
     syntax match prologNumber '\d\+'
     syntax match prologNumber '[-+]\d\+'
@@ -85,14 +85,11 @@ syntax case match
     syntax region prologList matchgroup=prologListDelimiter start='\[' end='\]' contains=prologListDivisor,@prologAll
     syntax match prologListDivisor '[,|]' contained
   " -> Fuctor
-    " Functor Group
-      syntax region prologFunctorGroup start='[a-z]\w*(' end=')' contains=prologFunctor,prologParameters keepend
-      syntax region prologFunctorGroup start="'.\{-}'(" end=")" contains=prologFunctor,prologParameters keepend
     " Functor
-      syntax match prologFunctor '[a-z]\w*\((\)\@=' contained containedin=prologFunctorGroup nextgroup=prologParameters
-      syntax match prologFunctor "'.*'\((\)\@=" contained containedin=prologFunctorGroup nextgroup=prologParameters
+      syntax match prologFunctor '[a-z]\w*\((\)\@=' nextgroup=prologParameters
+      syntax match prologFunctor "'.\{-}'\((\)\@=" nextgroup=prologParameters
     " Parameters
-      syntax region prologParameters matchgroup=prologParameterDelimiter start='(' end=')' containedin=prologFunctorGroup contains=prologParameterDivisor,@prologAll
+      syntax region prologParameters matchgroup=prologParameterDelimiter start='(' end=')' contained contains=prologParameterDivisor,@prologAll extend
       syntax match prologParameterDivisor ',' contained containedin=prologParameters
   " -> Variables
     " Varable
@@ -101,7 +98,7 @@ syntax case match
       syntax match prologAnonymousVariable '_[A-Za-z0-9_]*'
     syntax cluster prologVariables contains=prologVariable,prologAnonymousVariable
   " -> String
-    syntax region prologString start='"' skip='\\"' end='"'
+    syntax region prologString start='"' skip='\\"' end='"' extend
   " -> Body
     " Normal Body
       syntax region prologBody matchgroup=prologBodyDelimiter start=':-' end='\.' contains=@prologAll
@@ -110,11 +107,11 @@ syntax case match
       syntax region prologDCGBody matchgroup=prologDCGBodyDelimiter start='-->' end='\.' contains=@prologAll,prologDCGBodyDivisor
       syntax match prologDCGBodyDivisor '[{\}]' contained containedin=prologDCGBody
   " -> Comment
-    syntax match prologComment "%.*$"
+    syntax region prologComment start="%" end="$"
     syntax region prologCComment fold start=/\/\*/ end=/\*\//
     syntax cluster prologComments contains=prologComment,prologCComment
   " -> All
-    syntax cluster prologAll contains=@prologKeywords,@prologOperators,prologAtom,@prologNumbers,prologList,prologFunctorGroup,@prologVariables,prologString
+    syntax cluster prologAll contains=@prologKeywords,@prologOperators,prologAtom,@prologNumbers,prologList,prologFunctor,@prologVariables,prologString,@prologComments
 " => Color definition
   " -> Keywords
     highlight prologKeywordTrue ctermfg=green cterm=italic guifg=#C3E88D gui=italic
